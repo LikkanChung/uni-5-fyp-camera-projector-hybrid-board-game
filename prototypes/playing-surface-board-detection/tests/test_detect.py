@@ -13,6 +13,29 @@ def test_detect(mock_board):
     cv2.destroyAllWindows()
 
 
+def test_detect_live():
+    cap = cv2.VideoCapture(4)
+    cap.set(3, 1920)  # set the Horizontal resolution
+    cap.set(4, 1080)  # Set the Vertical resolution
+
+    while True:
+        _, image = cap.read()
+
+        tags = find_anchor_points(image)
+        for tag in tags:
+            image = draw_bounds(image, tag['points'])
+        board_tags = tag_board(tags)
+        image = draw_bounds(image, list(board_tags.values()))
+        h, w, _ = image.shape
+        image_scaled = cv2.resize(image, (int(w), int(h)))
+
+        cv2.imshow("img", image_scaled)
+        if cv2.waitKey(1) == ord("q"):
+            break
+    cap.release()
+    cv2.destroyAllWindows()
+
 
 if __name__ == '__main__':
     test_detect(cv2.imread("assets/composite.jpg"))
+    test_detect_live()

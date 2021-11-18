@@ -8,14 +8,16 @@ def find_anchor_points(image):
     tags = []
 
     # Match up points to anchors
-    if len(data_tuple) == len(points_tuple):
+    if data_tuple is not None and points_tuple is not None and len(data_tuple) == len(points_tuple):
         data = list(data_tuple)
-        points = list(points_tuple)
-
+        points = list(points_tuple.astype(int))
         for index in range(len(data)):
-            tag = json.loads(data[index])
-            tag['points'] = points[index].tolist()
-            tags.append(tag)
+            try:
+                tag = json.loads(data[index])
+                tag['points'] = points[index].tolist()
+                tags.append(tag)
+            except:
+                print("could not decode " + str(data[index]) + " in " + str(data))
 
     return tags
 
@@ -26,6 +28,7 @@ def tag_board(tags):
         print(tag)
         if tag['id'] == 'board':
             board_tags[tag['anchor']] = _get_center(tag['points'])
+    print(board_tags)
     return board_tags
 
 
