@@ -3,9 +3,13 @@ import cv2
 
 
 def test_detect(mock_board):
+
+    board = {
+    }
+
     tags = find_anchor_points(mock_board)
-    board_tags = tag_board(tags)
-    image = draw_bounds(mock_board, list(board_tags.values()))
+    board = tag_board(board, tags)
+    image = draw_bounds(mock_board, list(board.values()))
     h, w, _ = mock_board.shape
     image_scaled = cv2.resize(image, (int(w/2.5), int(h/2.5)))
     cv2.imshow("img", image_scaled)
@@ -18,14 +22,18 @@ def test_detect_live():
     cap.set(3, 1920)  # set the Horizontal resolution
     cap.set(4, 1080)  # Set the Vertical resolution
 
+    board = {
+
+    }
+
     while True:
         _, image = cap.read()
 
         tags = find_anchor_points(image)
         for tag in tags:
             image = draw_bounds(image, tag['points'])
-        board_tags = tag_board(tags)
-        image = draw_bounds(image, list(board_tags.values()))
+        board = tag_board(board, tags)
+        image = draw_bounds(image, list(board.values()))
         h, w, _ = image.shape
         image_scaled = cv2.resize(image, (int(w), int(h)))
 

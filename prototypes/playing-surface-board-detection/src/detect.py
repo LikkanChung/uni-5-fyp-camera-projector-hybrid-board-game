@@ -22,14 +22,15 @@ def find_anchor_points(image):
     return tags
 
 
-def tag_board(tags):
+def tag_board(board, tags):
     board_tags = {}
     for tag in tags:
         print(tag)
         if tag['id'] == 'board':
             board_tags[tag['anchor']] = _get_center(tag['points'])
     print(board_tags)
-    return board_tags
+    board.update(board_tags)
+    return board
 
 
 def _get_center(points):
