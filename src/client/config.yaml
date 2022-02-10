@@ -1,5 +1,10 @@
+client:
+  font: 32
+  control:
+    quit: esc
 resolution:
   camera:
+    id: 0
     x: 1920
     y: 1008
   projector:
