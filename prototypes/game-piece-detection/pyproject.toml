@@ -21,4 +21,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 detect = "src.detect:detect_pieces"
-capture = "src.training.collect.collect_dataset:main"
+collect = "src.training.collect.collect_dataset:main"
