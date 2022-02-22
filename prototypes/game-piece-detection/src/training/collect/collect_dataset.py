@@ -9,7 +9,7 @@ from ...utils import crop_and_zoom
 SAMPLE_TYPE = 'negative'  # 'positive' or 'negative'
 IMAGE_PIXELS = 50
 DATA_PATH = os.path.join(os.getcwd(), 'data', SAMPLE_TYPE)
-SAMPLE_KEY = 105  # Height at which the images are captured: 60, 75, 99, 105
+SAMPLE_KEY = '75_additional'  # Height at which the images are captured: 60, 75, 99, 105
 
 def setup_capture():
     cv2.namedWindow('collect', cv2.WINDOW_GUI_NORMAL)

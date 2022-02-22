@@ -26,7 +26,7 @@ class ImageProcessor:
         filename = f'{self.filename_prefix}_{postfix}.jpg'
 
         self.filename_postfix += 1
-        return os.path.join(self.write_path, filename)
+        return filename
 
     def set_image(self, image):
         self.image = image
@@ -72,11 +72,13 @@ class ImageProcessor:
 
             # Save image
             filename = self._get_new_filename()
-            while os.path.isfile(filename):
+            filepath = os.path.join(self.write_path, filename)
+            while os.path.isfile(filepath):
                 filename = self._get_new_filename()
-            cv2.imwrite(filename, cropped_image)
+                filepath = os.path.join(self.write_path, filename)
+            cv2.imwrite(filepath, cropped_image)
 
-            print(f'Captured and saved as {filename}')
+            print(f'Captured and saved as {filepath}')
 
             # Append to Description file
             descriptor_filetype = ''

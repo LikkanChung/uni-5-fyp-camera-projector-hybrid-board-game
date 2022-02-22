@@ -12,6 +12,7 @@ packages = [
 python = "^3.8"
 pygame = "^2.1.2"
 opencv-python = "^4.5.5"
+imutils = "^0.5.4"
 
 [tool.poetry.dev-dependencies]
 
@@ -22,3 +23,4 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 detect = "src.detect:detect_pieces"
 collect = "src.training.collect.collect_dataset:main"
+combine_positives = "src.training.collect.create_combined_positive_set:combine_descriptor_files"
