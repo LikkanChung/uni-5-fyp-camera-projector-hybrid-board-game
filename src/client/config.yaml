@@ -1,7 +1,13 @@
+debug:
+  enabled: True
+  x: 512
+  y: 288
 client:
   font: 32
   control:
     quit: esc
+  color:
+    board_detect_threshold: 200
 resolution:
   camera:
     id: 0
