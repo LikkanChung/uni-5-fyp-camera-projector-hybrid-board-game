@@ -1,7 +1,7 @@
 """Helper class to see the camera feed with annotations"""
 import cv2
 from .image_transform import scale_to
-from ..config import config
+from src.client.utils.config import config
 
 class Debugger:
     def __init__(self, enabled=False):

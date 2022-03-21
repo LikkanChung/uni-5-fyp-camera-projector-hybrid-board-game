@@ -3,7 +3,7 @@ from src.client.utils.image_transform import crop_to
 import cv2
 import os
 import numpy
-from src.client.config import config
+from src.client.utils.config import config
 from src.client.utils.debug import debugger
 
 CASCADE_PATH = os.path.join('src', 'client', 'utils', 'detection', 'model', 'token_cascade.xml')

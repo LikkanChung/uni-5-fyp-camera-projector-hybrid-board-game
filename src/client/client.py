@@ -1,5 +1,4 @@
 import cv2
-import json
 import pygame
 import pygame.freetype
 from .utils.setup import get_initial_game_state
@@ -9,8 +8,8 @@ from .utils.calibration.calibration import Calibrator
 from .utils.detection.board import BoardBoundary, convert_box_to_rect
 from .utils.detection.tokens import TokenDetection
 from .utils import debug
-from .config import config
-from .utils.image_transform import crop_by_scale_factor, scale_to, crop_to
+from .utils.config import config
+from .utils.image_transform import crop_to
 
 
 def setup():
