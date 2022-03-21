@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from .smoothing import PointSmoother
+from src.common.game_logic.smoothing import PointSmoother
 from ...utils import debug
 
 
@@ -25,11 +25,11 @@ def convert_box_to_rect(box):
     first_element_in_list = 0
     last_element_in_list = len(box) - 1
     sorted_x = sorted(box, key=lambda c: c[0])
-    low_x = sorted_x[first_element_in_list][0]
-    high_x = sorted_x[last_element_in_list][0]
+    low_x = int(sorted_x[first_element_in_list][0])
+    high_x = int(sorted_x[last_element_in_list][0])
     sorted_y = sorted(box, key=lambda c: c[1])
-    low_y = sorted_y[first_element_in_list][1]
-    high_y = sorted_y[last_element_in_list][1]
+    low_y = int(sorted_y[first_element_in_list][1])
+    high_y = int(sorted_y[last_element_in_list][1])
     anchor = (low_x, low_y)
     size = (high_x - low_x, high_y - low_y)
     return anchor, size
@@ -37,7 +37,7 @@ def convert_box_to_rect(box):
 
 class BoardBoundary:
     def __init__(self, color_threshold: 200):
-        self.smoothing_buffer = PointSmoother(10)
+        self.smoothing_buffer = PointSmoother('box')
         self.color_threshold = color_threshold
         self.boundary = [[0, 0], [0, 0], [0, 0], [0, 0]]
 
@@ -45,6 +45,11 @@ class BoardBoundary:
         return self.boundary
 
     def find_board(self, image):
+        """
+        Finds the board in the image
+        :param image:
+        :return: A box of the board
+        """
         image_greyscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image_threshold = cv2.threshold(image_greyscale, self.color_threshold, 255, cv2.THRESH_BINARY)[1]
         contours = cv2.findContours(image_threshold.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -60,7 +65,6 @@ class BoardBoundary:
             box = cv2.boxPoints(rect)
             box = np.int0(box)
 
-            #square, length = _box_is_square(box)
             square = _box_is_square(box)
             length = int(rect[1][0])
             debug.debugger.update_variables('box_length', length)

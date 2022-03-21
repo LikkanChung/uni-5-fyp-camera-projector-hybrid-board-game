@@ -1,7 +1,7 @@
 """Helper class to see the camera feed with annotations"""
 import cv2
 from .image_transform import scale_to
-
+from ..config import config
 
 class Debugger:
     def __init__(self, enabled=False):
@@ -42,6 +42,15 @@ class Debugger:
                 (255, 0, 255),  # bgr
                 2
             )
+            cv2.putText(
+                image,
+                annotation,
+                (annotation_rect.get('x'), annotation_rect.get('y')),
+                config.get_global_cv2_font(),
+                1.5,
+                (255, 0, 255),
+                2
+            )
 
         return image
 
@@ -65,7 +74,7 @@ class Debugger:
                     text,
                     (50, line_spacing),
                     # make a global config object
-                    cv2.FONT_HERSHEY_SIMPLEX,
+                    config.get_global_cv2_font(),
                     1.5,
                     (255, 0, 255),
                     2

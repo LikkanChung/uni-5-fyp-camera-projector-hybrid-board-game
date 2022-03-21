@@ -6,6 +6,13 @@ def scale_to(image, x, y):
     return cv2.resize(image, (x, y))
 
 
+def crop_to(image, min_point, max_point):
+    min_x, min_y = min_point
+    max_x, max_y = max_point
+    cropped_image = image[min_y:max_y, min_x:max_x]
+    return cropped_image
+
+
 def crop_by_scale_factor(image, sf_x, sf_y):
     height, width, _ = image.shape
 
@@ -23,5 +30,5 @@ def crop_by_scale_factor(image, sf_x, sf_y):
     min_y = int(centre_y - offset_from_centre_y)
     max_y = int(centre_y + offset_from_centre_y)
 
-    cropped_image = image[min_y:max_y, min_x:max_x]
+    cropped_image = crop_to(image, (min_x, min_y), (max_x, max_y))
     return cropped_image

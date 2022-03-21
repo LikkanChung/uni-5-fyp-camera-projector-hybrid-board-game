@@ -8,6 +8,24 @@ client:
     quit: esc
   color:
     board_detect_threshold: 200
+    token_background_threshold: 200
+    classes:
+      blue:
+        b: 163
+        g: 128
+        r: 110
+      green:
+        b: 152
+        g: 148
+        r: 133
+      purple:
+        b: 150
+        g: 138
+        r: 137
+      red:
+        b: 143
+        g: 128
+        r: 170
 resolution:
   camera:
     id: 0

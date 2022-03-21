@@ -16,6 +16,8 @@ Threshold: Approximately 200/255 still seems to be good as a binary threshold ba
 Using dominant color in the image seems to not have much impact over average color. 
 Best results come from the average color with black pixels omitted after the threshold filter.
 
+(blue, green, red)
+
 | color    | lower           | average         | higher          |
 |----------|-----------------|-----------------|-----------------|
 | blue     | (148, 105, 81)  | (163, 128, 110) | (179, 151, 139) |
