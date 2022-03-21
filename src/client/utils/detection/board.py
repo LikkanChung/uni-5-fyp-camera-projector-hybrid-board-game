@@ -37,7 +37,7 @@ def convert_box_to_rect(box):
 
 class BoardBoundary:
     def __init__(self, color_threshold: 200):
-        self.smoothing_buffer = PointSmoother('box')
+        self.smoothing_buffer = PointSmoother('box', 10)
         self.color_threshold = color_threshold
         self.boundary = [[0, 0], [0, 0], [0, 0], [0, 0]]
 
@@ -74,10 +74,10 @@ class BoardBoundary:
                     'length': int(rect[1][0]),
                     'box': box
                 }
+                anchor, size = convert_box_to_rect(box)
+                debug.debugger.add_temporary_annotation('threshold', anchor, size)
 
-            anchor, size = convert_box_to_rect(box)
-            debug.debugger.add_temporary_annotation('threshold', anchor, size)
-
-        self.smoothing_buffer.add_point(largest_bounds.get('box'))
-        self.boundary = self.smoothing_buffer.get_average()
+        if largest_bounds.get('length') > 0:
+            self.smoothing_buffer.add_point(largest_bounds.get('box'))
+            self.boundary = self.smoothing_buffer.get_average()
         return self.boundary
