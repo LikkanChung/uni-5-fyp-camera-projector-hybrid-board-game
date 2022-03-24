@@ -15,8 +15,8 @@ def _box_is_square(box):
     p1 = np.array(box[1])
     p2 = np.array(box[2])
 
-    p01_length = np.linalg.norm(p0 - p1)
-    p12_length = np.linalg.norm(p1 - p2)
+    p01_length = np.linalg.norm(p0 - p1) + 1
+    p12_length = np.linalg.norm(p1 - p2) + 1
 
     aspect_ratio = p01_length / p12_length
     average_dimension = (p01_length + p12_length) / 2

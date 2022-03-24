@@ -9,6 +9,9 @@ class PointSmoother:
         self.buffer_length = buffer_length
         self.buffer = []
 
+    def __repr__(self):
+        return str(f'PointSmoother({self.point_type},{self.buffer_length})')
+
     def add_point(self, point):
         # point is an object with the structure of box
         self.buffer.append(point)

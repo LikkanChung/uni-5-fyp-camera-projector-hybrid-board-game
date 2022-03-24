@@ -63,7 +63,8 @@ class CalibrationTiles(pygame.sprite.Sprite):
     def update(self, events, dt):
         pass
 
-    def add_tile(self, color, relative_position_x, relative_position_y, size=30):
+    def add_tile(self, color, relative_position_xy, size=30):
+        relative_position_x, relative_position_y = relative_position_xy
         tile = pygame.Rect(
             (self.centre_x + relative_position_x, self.centre_y + relative_position_y),
             (size, size)

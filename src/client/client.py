@@ -10,6 +10,7 @@ from .utils.detection.tokens import TokenDetection
 from .utils import debug
 from .utils.config import config
 from .utils.image_transform import crop_to
+from ..common.game_logic.smoothing import PointSmoother
 
 
 def setup():
@@ -48,8 +49,14 @@ def setup():
     # Board and Piece objects
     game_board = BoardBoundary(config.get_property(['client', 'color', 'board_detect_threshold']))
     token_detector = TokenDetection(None)
+    tokens_buffer = {}
+
+    for color in config.get_property(['client', 'color', 'classes']):
+        tokens_buffer[color] = PointSmoother('point', 5)
 
     game_state = get_initial_game_state()
+    step_3_start_timestamp = 10000
+    start_step_3 = False
     while game_state.get('state') is State.CALIBRATING:
         events, game_state = input_event_handler(game_state)
         calibrate_sprites.update(events, dt)
@@ -70,41 +77,55 @@ def setup():
 
         board_image = crop_to(image, anchor, (min_x + d_x, min_y + d_y))
         tokens = token_detector.find_pieces(board_image, anchor)
+
+        for token in tokens:
+            tokens_buffer[token.get_color()].add_point(token.get_coordinate())
+
+            x, y = token.get_coordinate()
+            debug_anchor = (x - 5, y - 5)
+            debug.debugger.update_annotation(f'{token.get_color()}_coord', debug_anchor, (10, 10))
+
         [debug.debugger.update_variables(f'token_{t.get_color()}', t) for t in tokens]
 
         if pygame.time.get_ticks() > 5000:
-            calibrator.step_2()
-            next_step = False
+            if not start_step_3:
+                calibrator.step_2()
             for e in events:
                 if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
-                    next_step = True
-            if next_step:
+                    start_step_3 = True
+                    calibrator.step_3()
+                    # Add some waiting time to allow the buffers to smooth
+                    step_3_start_timestamp = pygame.time.get_ticks() + 5000
+            if start_step_3 and pygame.time.get_ticks() > step_3_start_timestamp:
                 break
         quit_handler(game_state)
 
     events, game_state = input_event_handler(game_state)
-    calibrator.step_3()
     calibrate_sprites.update(events, dt)
     calibrate_sprites.draw(window)
     pygame.display.update()
     dt = clock.tick(60)
     debug.debugger.update_variables('time', dt)
     # Calibrate frames
+    for color in tokens_buffer:
+        tokens_buffer[color] = tokens_buffer.get(color).get_average()
+    calibrator.align_frames(tokens_buffer)
     game_state['state'] = State.MAIN
 
-    return clock, game_state, video_capture
+    return clock, game_state, video_capture, calibrator
 
 
 def main():
-    clock, game_state, video_capture = setup()
+    clock, game_state, video_capture, calibrator = setup()
 
-    print('before main while', game_state)
+    print('Starting main game loop', game_state)
     while game_state.get('state') is State.MAIN:
         # Quit event handlers
         events, game_state = input_event_handler(game_state)
 
         image = capture_image(video_capture)
 
+        pygame.display.update()
         dt = clock.tick(60)
         debug.debugger.update_variables('time', dt)
         quit_handler(game_state)

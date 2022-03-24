@@ -13,12 +13,19 @@ def crop_to(image, min_point, max_point):
     return cropped_image
 
 
-def crop_by_scale_factor(image, sf_x, sf_y):
+def get_centre_of_image(image):
     height, width, _ = image.shape
 
     centre_x = int(width / 2)
     centre_y = int(height / 2)
 
+    return centre_x, centre_y
+
+
+def crop_by_scale_factor(image, sf_x, sf_y):
+    centre_x, centre_y = get_centre_of_image(image)
+
+    height, width, _ = image.shape
     scaled_width = width / sf_x
     scaled_height = height / sf_y
 

@@ -2,6 +2,7 @@ from ...game_logic.smoothing import PointSmoother
 from src.client.utils.debug import debugger
 from src.client.utils.config import config
 
+
 class Token:
     def __init__(self, color, coordinate):
         self.color = color
@@ -29,10 +30,6 @@ class Token:
         x, y = coordinate
         self.point_smoother.add_point((int(x), int(y)))
         self.coordinate = self.point_smoother.get_average()
-
-        x, y = self.coordinate
-        debug_box = (x - 5, y - 5)
-        debugger.update_annotation(f'{self.color}_coord', debug_box, (10, 10))
 
         self.reset_update_counter()
 
