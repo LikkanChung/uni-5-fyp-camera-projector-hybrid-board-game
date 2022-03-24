@@ -4,7 +4,6 @@ from .image_transform import scale_to, crop_by_scale_factor
 from ..utils import debug
 
 
-
 def input_event_handler(game_state):
     events = pygame.event.get()
     for e in events:

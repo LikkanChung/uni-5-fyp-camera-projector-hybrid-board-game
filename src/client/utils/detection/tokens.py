@@ -39,6 +39,7 @@ def detect_color(piece_image):
             return None
     return None
 
+
 def classify_color(bgr_color):
     colors = config.get_property(['client', 'color', 'classes'])
     proximity = dict()
@@ -58,20 +59,27 @@ class TokenDetection:
         self.cascade = cv2.CascadeClassifier(CASCADE_PATH)
 
     def find_pieces(self, board_image, board_anchor):
+        [debugger.update_variables(f'detected_{color}', '') for color in config.get_property(['client', 'color', 'classes'])]
         if board_image is not None:
-            identified_pieces_rects = self.cascade.detectMultiScale(board_image)
+            identified_pieces_rects = self.cascade.detectMultiScale(
+                board_image
+            )
             offset_x, offset_y = board_anchor
             for rectangle in identified_pieces_rects:
                 (x, y) = (rectangle[0], rectangle[1])
                 (dx, dy) = (rectangle[2], rectangle[3])
                 piece_image = crop_to(board_image, (x, y), (x + dx, y + dy))
                 color_bgr = detect_color(piece_image)
+
                 if color_bgr:
+                    # Known color class for a token
                     color_class = classify_color(color_bgr)
                     classified_token = False
 
                     token_anchor_coordinate = (x + offset_x, y + offset_y)
                     token_coordinate = centre_coordinate(token_anchor_coordinate, (dx, dy))
+
+                    debugger.update_variables(f'detected_{color_class}', token_anchor_coordinate)
 
                     for token in self.detected_pieces:
                         if token.get_color() == color_class:
@@ -87,6 +95,17 @@ class TokenDetection:
                 else:
                     # No color detected, or image all black
                     pass
+
+            # Handle missing tokens (one no longer on the board)
+            for t in self.detected_pieces:
+                t.update_counter()
+                if t.get_last_update() > config.get_property(['client', 'token_update_timeout']):
+                    # token gone missing
+                    debugger.remove_annotation(t.get_color())
+                    debugger.remove_annotation(f'{t.get_color()}_coord')
+                    self.detected_pieces.remove(t)
+
+
             return self.detected_pieces
         return None
 

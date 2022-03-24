@@ -36,7 +36,7 @@ class PointSmoother:
             x, y = point
             sum_x += x
             sum_y += y
-        return sum_x / len(self.buffer), sum_y / len(self.buffer)
+        return int(sum_x / len(self.buffer)), int(sum_y / len(self.buffer))
 
     def get_average(self):
         if self.point_type == 'box':

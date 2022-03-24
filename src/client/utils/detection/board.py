@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from src.common.game_logic.smoothing import PointSmoother
 from ...utils import debug
+from ...utils.config import config
 
 
 def _box_is_square(box):
@@ -10,14 +11,18 @@ def _box_is_square(box):
     # index = ordered from the lowest anticlockwise, where lowest is on the screen (not in coord frame)
     # coord = [x, y]
     # +1 to ensure non-zero division
-    width = abs(int(box[0][0] - box[1][0])) + 1
-    height = abs(int(box[2][1] - box[1][1])) + 1
-    aspect_ratio = width / height
+    p0 = np.array(box[0])
+    p1 = np.array(box[1])
+    p2 = np.array(box[2])
 
-  #  average_dimension = (width + height) / 2
+    p01_length = np.linalg.norm(p0 - p1)
+    p12_length = np.linalg.norm(p1 - p2)
+
+    aspect_ratio = p01_length / p12_length
+    average_dimension = (p01_length + p12_length) / 2
 
     # Assuming squareness is within 5%
-    return 0.95 <= aspect_ratio <= 1.05#, average_dimension
+    return 0.95 <= aspect_ratio <= 1.05, average_dimension
 
 
 def convert_box_to_rect(box):
@@ -37,11 +42,15 @@ def convert_box_to_rect(box):
 
 class BoardBoundary:
     def __init__(self, color_threshold: 200):
-        self.smoothing_buffer = PointSmoother('box', 10)
+        self.smoothing_buffer = PointSmoother(
+            'box',
+            config.get_property(['client', 'detection_smoothing_buffer', 'board'])
+        )
         self.color_threshold = color_threshold
         self.boundary = [[0, 0], [0, 0], [0, 0], [0, 0]]
 
     def get_boundary(self):
+        # Box
         return self.boundary
 
     def find_board(self, image):
@@ -65,13 +74,12 @@ class BoardBoundary:
             box = cv2.boxPoints(rect)
             box = np.int0(box)
 
-            square = _box_is_square(box)
-            length = int(rect[1][0])
+            square, length = _box_is_square(box)
             debug.debugger.update_variables('box_length', length)
 
             if square and length > largest_bounds.get('length'):
                 largest_bounds = {
-                    'length': int(rect[1][0]),
+                    'length': length,
                     'box': box
                 }
                 anchor, size = convert_box_to_rect(box)

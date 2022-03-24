@@ -11,6 +11,7 @@ class Calibrator:
         self.calibrate_sprites = calibrate_sprites
         self.font = font
         self.projector_resolution = projector_resolution
+        self.instruction = None
 
     def is_complete(self):
         return self.complete
@@ -20,7 +21,7 @@ class Calibrator:
 
     def start(self):
         title = calibration.CalibrationTitle(
-            self.font, "Calibrating", "Please wait", self.projector_resolution, None, None
+            self.font, 'Calibrating', 'Please wait', self.projector_resolution, None, None
         )
         self.calibrate_sprites.add(title)
         # 1. This should project 4 squares on the playing surface, doesn't matter where -
@@ -31,9 +32,19 @@ class Calibrator:
         piece_tiles.add_tile(pygame.Color('green'), 150, 100)
         piece_tiles.add_tile(pygame.Color('blue'), -150, 100)
         piece_tiles.add_tile(pygame.Color('purple'), 150, -150)
-        title.set_subtitle("Place coloured pieces onto tiles")
+        title.set_subtitle('Place coloured pieces onto tiles')
+        self.instruction = title
         # 2. The player places 4 colored pieces in those squares
+
+    def step_2(self):
+        # 2. The player places 4 colored pieces in those squares
+        self.instruction.set_subtitle('Press space when ready')
+        
+    def step_3(self):
         # 3. The camera detects the location of the pieces in the camera frame
         # 4. Line up the two frames
+        self.instruction.set_subtitle('Please wait')
+        print('step3')
 
-
+    def align_frames(self):
+        pass

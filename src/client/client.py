@@ -70,18 +70,33 @@ def setup():
 
         board_image = crop_to(image, anchor, (min_x + d_x, min_y + d_y))
         tokens = token_detector.find_pieces(board_image, anchor)
-        debug.debugger.update_variables('tokens', tokens)
+        [debug.debugger.update_variables(f'token_{t.get_color()}', t) for t in tokens]
 
-        if pygame.time.get_ticks() > 1000 and False:
-            print(pygame.time.get_ticks())
-            game_state['state'] = State.MAIN
+        if pygame.time.get_ticks() > 5000:
+            calibrator.step_2()
+            next_step = False
+            for e in events:
+                if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+                    next_step = True
+            if next_step:
+                break
         quit_handler(game_state)
-    print('last before return ', game_state)
-    return font, clock, game_state, video_capture
+
+    events, game_state = input_event_handler(game_state)
+    calibrator.step_3()
+    calibrate_sprites.update(events, dt)
+    calibrate_sprites.draw(window)
+    pygame.display.update()
+    dt = clock.tick(60)
+    debug.debugger.update_variables('time', dt)
+    # Calibrate frames
+    game_state['state'] = State.MAIN
+
+    return clock, game_state, video_capture
 
 
 def main():
-    font, clock, game_state, video_capture = setup()
+    clock, game_state, video_capture = setup()
 
     print('before main while', game_state)
     while game_state.get('state') is State.MAIN:

@@ -3,6 +3,7 @@ import cv2
 from .image_transform import scale_to
 from src.client.utils.config import config
 
+
 class Debugger:
     def __init__(self, enabled=False):
         self.enabled = enabled
@@ -107,7 +108,12 @@ class Debugger:
             'h': int(h)
         }
 
+    def remove_annotation(self, label):
+        if self.annotations.get(label):
+            self.annotations.pop(label)
+
     def add_temporary_annotation(self, image_key, anchor, size, color=(255, 0, 0)):
+        # image key - see dict at top - which image the annotation is added to
         x, y = anchor
         w, h = size
         cv2.rectangle(
