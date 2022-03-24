@@ -1,4 +1,4 @@
-from src.detect import find_anchor_points, tag_board, draw_bounds
+from src.detect import find_anchor_points, tag_board, draw_bounds, crop_and_scale
 import cv2
 
 
@@ -28,6 +28,7 @@ def test_detect_live():
 
     while True:
         _, image = cap.read()
+        image = crop_and_scale(image)
 
         tags = find_anchor_points(image)
         for tag in tags:

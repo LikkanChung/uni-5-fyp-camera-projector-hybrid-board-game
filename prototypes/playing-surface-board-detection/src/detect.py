@@ -1,6 +1,7 @@
 import cv2
 import json
 
+
 def find_anchor_points(image):
     qr_code_detector = cv2.QRCodeDetector()
     _, data_tuple, points_tuple, _ = qr_code_detector.detectAndDecodeMulti(image)
@@ -49,3 +50,28 @@ def draw_bounds(image, points):
         point_2 = points[(i+1) % num_points]
         cv2.line(image, point_1, point_2, color=(255, 0, 0), thickness=2)
     return image
+
+
+def crop_and_scale(image):
+    scale_factor = 2.5
+
+    height, width, channels = image.shape
+
+    centre_y = int(height / 2)
+    centre_x = int(width / 2)
+
+    scaled_half_size_y = int((height / scale_factor) / 2)
+    scaled_half_size_x = int((width / scale_factor) / 2)
+
+    # Bounds
+    min_y = centre_y - scaled_half_size_y
+    max_y = centre_y + scaled_half_size_y
+    min_x = centre_x - scaled_half_size_x
+    max_x = centre_x + scaled_half_size_x
+
+    cropped_image = image[min_y:max_y, min_x:max_x]
+
+    scaled_cropped_image = cv2.resize(cropped_image, (width, height))
+
+    return scaled_cropped_image
+
