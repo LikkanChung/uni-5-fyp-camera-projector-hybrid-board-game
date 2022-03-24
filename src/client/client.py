@@ -4,13 +4,31 @@ import pygame.freetype
 from .utils.setup import get_initial_game_state
 from .utils.input_handler import input_event_handler, quit_handler, capture_image
 from ..common.game_logic.states import State
+from ..common.game_logic.games.tic_tac_toe.game import GameHandler
 from .utils.calibration.calibration import Calibrator
 from .utils.detection.board import BoardBoundary, convert_box_to_rect
 from .utils.detection.tokens import TokenDetection
 from .utils import debug
 from .utils.config import config
-from .utils.image_transform import crop_to
+from .utils.image_transform import crop_to, scale_by
 from ..common.game_logic.smoothing import PointSmoother
+
+
+def detect_board_elements(video_capture, game_board, token_detector):
+    image = capture_image(video_capture)
+    scaled_image = scale_by(image, 1.5)
+
+    board_boundaries = game_board.find_board(scaled_image)
+    anchor, size = convert_box_to_rect(board_boundaries)
+    debug.debugger.update_annotation('board', anchor, size)
+
+    min_x, min_y = anchor
+    d_x, d_y = size
+
+    board_image = crop_to(scaled_image, anchor, (min_x + d_x, min_y + d_y))
+    tokens = token_detector.find_pieces(board_image, anchor)
+
+    return board_boundaries, tokens
 
 
 def setup():
@@ -66,17 +84,7 @@ def setup():
         debug.debugger.update_variables('time', dt)
 
         # Image handling
-        image = capture_image(video_capture)
-
-        board_boundaries = game_board.find_board(image)
-        anchor, size = convert_box_to_rect(board_boundaries)
-        debug.debugger.update_annotation('board', anchor, size)
-
-        min_x, min_y = anchor
-        d_x, d_y = size
-
-        board_image = crop_to(image, anchor, (min_x + d_x, min_y + d_y))
-        tokens = token_detector.find_pieces(board_image, anchor)
+        board_boundaries, tokens = detect_board_elements(video_capture, game_board, token_detector)
 
         for token in tokens:
             tokens_buffer[token.get_color()].add_point(token.get_coordinate())
@@ -112,21 +120,45 @@ def setup():
     calibrator.align_frames(tokens_buffer)
     game_state['state'] = State.MAIN
 
-    return clock, game_state, video_capture, calibrator
+    return window, clock, game_state, video_capture, calibrator, game_board, token_detector
 
 
 def main():
-    clock, game_state, video_capture, calibrator = setup()
+    window, clock, game_state, video_capture, calibrator, game_board, token_detector = setup()
+
+    # todo make it enter a game handler which has backgrounds etc
 
     print('Starting main game loop', game_state)
     while game_state.get('state') is State.MAIN:
         # Quit event handlers
         events, game_state = input_event_handler(game_state)
+        dt = clock.tick(60)
 
-        image = capture_image(video_capture)
+        projector_resolution = (
+            config.get_property(['resolution', 'projector', 'x']),
+            config.get_property(['resolution', 'projector', 'y']),
+        )
+
+        tic_tac_toe = GameHandler(projector_resolution)
+
+        # start a game
+        game_state['state'] = State.GAME
+        game_sprite_group = pygame.sprite.Group()
+        tic_tac_toe.start(game_sprite_group)
+        while game_state.get('state') is State.GAME:
+            events, game_state = input_event_handler(game_state)
+            dt = clock.tick(60)
+            debug.debugger.update_variables('time', dt)
+
+            board_boundaries, tokens = detect_board_elements(video_capture, game_board, token_detector)
+            tic_tac_toe.update_board(board_boundaries)
+
+            game_sprite_group.update(events, dt)
+            game_sprite_group.draw(window)
+            pygame.display.update()
+            quit_handler(game_state)
 
         pygame.display.update()
-        dt = clock.tick(60)
         debug.debugger.update_variables('time', dt)
         quit_handler(game_state)
 

@@ -28,7 +28,7 @@ class PointSmoother:
             for p in point_of_box:
                 sum_x += p[0]
                 sum_y += p[1]
-            average_point = [sum_x / len(point_of_box), sum_y / len(point_of_box)]
+            average_point = [int(sum_x / len(point_of_box)), int(sum_y / len(point_of_box))]
             average_box.append(average_point)
         return average_box
 

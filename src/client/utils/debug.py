@@ -102,10 +102,10 @@ class Debugger:
         x, y = anchor
         w, h = size
         self.annotations[label] = {
-            'x': int(x),
-            'y': int(y),
-            'w': int(w),
-            'h': int(h)
+            'x': int(x * (2/3)),
+            'y': int(y * (2/3)),
+            'w': int(w * (2/3)),
+            'h': int(h * (2/3))
         }
 
     def remove_annotation(self, label):
@@ -118,8 +118,8 @@ class Debugger:
         w, h = size
         cv2.rectangle(
             self.images.get(image_key).get('image'),
-            (int(x), int(y)),
-            (int(w), int(h)),
+            (int(x * (2/3)), int(y * (2/3))),
+            (int(w * (2/3)), int(h * (2/3))),
             color,  # bgr
             2
         )

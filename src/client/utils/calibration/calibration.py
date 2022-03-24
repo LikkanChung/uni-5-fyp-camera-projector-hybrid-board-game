@@ -77,7 +77,6 @@ class Calibrator:
         # 3. The camera detects the location of the pieces in the camera frame
         # 4. Line up the two frames
         self.instruction.set_subtitle('Please wait')
-        print('step3')
 
     def align_frames(self, tokens):
         # 4. Line up the two frames

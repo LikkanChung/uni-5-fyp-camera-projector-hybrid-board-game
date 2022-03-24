@@ -7,7 +7,7 @@ client:
   control:
     quit: esc
   color:
-    board_detect_threshold: 220
+    board_detect_threshold: 200
     token_background_threshold: 200
     classes:
       blue:
@@ -34,7 +34,8 @@ resolution:
   camera:
     id: 0
     x: 1920
-    y: 1008
+    y: 1080
+    scale_by: 1.5
   projector:
     x: 1920
     y: 1080
