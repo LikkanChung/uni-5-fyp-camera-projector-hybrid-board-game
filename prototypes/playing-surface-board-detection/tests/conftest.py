@@ -1,3 +1,6 @@
+import pytest
+import cv2
+
+@pytest.fixture
 def mock_board():
-    with open("assets/composite.jpg", "r") as mock_board_img:
-        yield mock_board_img
+    yield cv2.imread("tests/assets/composite.jpg")

@@ -1,4 +1,4 @@
-from detect import find_anchor_points, tag_board, draw_bounds
+from src.detect import find_anchor_points, tag_board, draw_bounds
 import cv2
 
 
@@ -18,7 +18,7 @@ def test_detect(mock_board):
 
 
 def test_detect_live():
-    cap = cv2.VideoCapture(4)
+    cap = cv2.VideoCapture(0)
     cap.set(3, 1920)  # set the Horizontal resolution
     cap.set(4, 1080)  # Set the Vertical resolution
 
