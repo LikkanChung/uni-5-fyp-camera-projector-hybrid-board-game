@@ -28,7 +28,8 @@ client:
         r: 170
   detection_smoothing_buffer:
     board: 15
-    token: 100
+    token: 50
+    token_calibration: 5
   token_update_timeout: 15
 resolution:
   camera:

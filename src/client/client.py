@@ -16,16 +16,15 @@ from ..common.game_logic.smoothing import PointSmoother
 
 def detect_board_elements(video_capture, game_board, token_detector):
     image = capture_image(video_capture)
-    scaled_image = scale_by(image, 1.5)
-
-    board_boundaries = game_board.find_board(scaled_image)
+    image = scale_by(image, 1.5)
+    board_boundaries = game_board.find_board(image)
     anchor, size = convert_box_to_rect(board_boundaries)
     debug.debugger.update_annotation('board', anchor, size)
 
     min_x, min_y = anchor
     d_x, d_y = size
 
-    board_image = crop_to(scaled_image, anchor, (min_x + d_x, min_y + d_y))
+    board_image = crop_to(image, anchor, (min_x + d_x, min_y + d_y))
     tokens = token_detector.find_pieces(board_image, anchor)
 
     return board_boundaries, tokens
@@ -70,7 +69,10 @@ def setup():
     tokens_buffer = {}
 
     for color in config.get_property(['client', 'color', 'classes']):
-        tokens_buffer[color] = PointSmoother('point', 5)
+        tokens_buffer[color] = PointSmoother(
+            'point',
+            config.get_property(['client', 'detection_smoothing_buffer', 'token_calibration'])
+        )
 
     game_state = get_initial_game_state()
     step_3_start_timestamp = 10000
@@ -118,6 +120,7 @@ def setup():
     for color in tokens_buffer:
         tokens_buffer[color] = tokens_buffer.get(color).get_average()
     calibrator.align_frames(tokens_buffer)
+    [debug.debugger.remove_annotation(f'token_{color}') for color in ['red', 'blue']]
     game_state['state'] = State.MAIN
 
     return window, clock, game_state, video_capture, calibrator, game_board, token_detector
@@ -139,7 +142,7 @@ def main():
             config.get_property(['resolution', 'projector', 'y']),
         )
 
-        tic_tac_toe = GameHandler(projector_resolution)
+        tic_tac_toe = GameHandler(projector_resolution, config.get_global_pygame_font())
 
         # start a game
         game_state['state'] = State.GAME
@@ -152,6 +155,7 @@ def main():
 
             board_boundaries, tokens = detect_board_elements(video_capture, game_board, token_detector)
             tic_tac_toe.update_board(board_boundaries)
+            tic_tac_toe.update_tokens(tokens)
 
             game_sprite_group.update(events, dt)
             game_sprite_group.draw(window)

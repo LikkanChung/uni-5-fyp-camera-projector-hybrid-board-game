@@ -79,8 +79,6 @@ class TokenDetection:
                     token_anchor_coordinate = (x + offset_x, y + offset_y)
                     token_coordinate = centre_coordinate(token_anchor_coordinate, (dx, dy))
 
-                    debugger.update_variables(f'detected_{color_class}', token_anchor_coordinate)
-
                     for token in self.detected_pieces:
                         if token.get_color() == color_class:
                             token.update_coordinate(token_coordinate)
@@ -104,7 +102,6 @@ class TokenDetection:
                     debugger.remove_annotation(t.get_color())
                     debugger.remove_annotation(f'{t.get_color()}_coord')
                     self.detected_pieces.remove(t)
-
 
             return self.detected_pieces
         return None
