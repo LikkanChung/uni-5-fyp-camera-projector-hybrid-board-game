@@ -154,3 +154,7 @@ class Calibrator:
         point = numpy.dot(self.transform_matrices.get('rotate'), point)
         point = point + self.transform_matrices.get('translate_to_final')
         return point.astype(int)
+
+    def step_5(self, tokens):
+        self.instruction.set_subtitle('Remove all pieces from the board')
+        return len(tokens) == 0

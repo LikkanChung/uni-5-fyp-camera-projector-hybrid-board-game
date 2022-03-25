@@ -121,6 +121,18 @@ def setup():
         tokens_buffer[color] = tokens_buffer.get(color).get_average()
     calibrator.align_frames(tokens_buffer)
     [debug.debugger.remove_annotation(f'token_{color}') for color in ['red', 'blue']]
+
+    cleared_board = False
+    while not cleared_board:
+        events, game_state = input_event_handler(game_state)
+        # Image handling
+        board_boundaries, tokens = detect_board_elements(video_capture, game_board, token_detector)
+        cleared_board = calibrator.step_5(tokens)
+        calibrate_sprites.update(events, dt)
+        calibrate_sprites.draw(window)
+        pygame.display.update()
+        dt = clock.tick(60)
+
     game_state['state'] = State.MAIN
 
     return window, clock, game_state, video_capture, calibrator, game_board, token_detector

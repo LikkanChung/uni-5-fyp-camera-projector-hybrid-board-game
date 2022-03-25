@@ -56,8 +56,9 @@ class GameHandler:
             board_x, board_y = self.board_anchor
             dx = token_x - board_x
             dy = token_y - board_y
-            col = int(dx / (self.board_size[0] / 3))
-            row = int(dy / (self.board_size[1] / 3))
+            col = min(max(0, int(dx / (self.board_size[0] / 3))), 2)
+            row = min(max(0, int(dy / (self.board_size[1] / 3))), 2)
             self.board.update_game_state(row, col, token.get_color())
+            print(f'{token} in {row},{col}')
         self.check_win_state()
 
