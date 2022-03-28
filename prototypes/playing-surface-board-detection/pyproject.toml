@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "playing-surface-board-detection"
+version = "0.1.0"
+description = ""
+authors = ["Likkan Chung <llc721@student.bham.ac.uk>"]
+
+packages = [
+    { include = "src/" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.7,<3.11"
+pytest = "^6.2.5"
+opencv-python = "^4.5.4"
+qrcode = "^7.3.1"
+Pillow = "^8.4.0"
+pytest-pythonpath = "^0.7.4"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+generate = "src.generate:main"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests"
+]
+

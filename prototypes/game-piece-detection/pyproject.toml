@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "game-piece-detection"
+version = "0.1.0"
+description = ""
+authors = ["Likkan Chung <llc721@student.bham.ac.uk>"]
+
+packages = [
+    { include = "src/"}
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pygame = "^2.1.2"
+opencv-python = "^4.5.5"
+imutils = "^0.5.4"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+detect = "src.detect:detect_pieces"
+collect = "src.training.collect.collect_dataset:main"
+combine_positives = "src.training.collect.create_combined_positive_set:combine_descriptor_files"
+detect_color = "src.detect_color:detect_colors"
+find_threshold = "src.detect_color:find_threshold"

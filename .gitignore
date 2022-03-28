@@ -1,0 +1,5 @@
+**/.pytest_cache/
+**/__pycache__/
+.idea
+
+/prototypes/game-piece-detection/data/
