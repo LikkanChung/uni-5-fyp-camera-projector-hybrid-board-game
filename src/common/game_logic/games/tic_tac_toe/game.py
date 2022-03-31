@@ -17,7 +17,9 @@ class GameHandler:
     def check_win_state(self):
         winner = ''
         game_state = self.board.get_game_state()
+        draw_state = True
         for row in game_state:
+            draw_state = False if any(tile is None for tile in row) else draw_state
             if all(tile is not None and row[0] == tile for tile in row):
                 winner = f'{row[0].upper()} wins!'
                 break
@@ -38,6 +40,8 @@ class GameHandler:
             elif all(tile is not None and game_state[2][0] == tile for tile in [game_state[1][1], game_state[0][2]]):
                 # top right to bottom left
                 winner = f'{game_state[2][0].upper()} wins!'
+        if draw_state:
+            winner = 'It\'s a draw!'
         if not winner == '':
             self.end = True
             self.board.update_message(winner + "   Remove pieces from board to play again")
