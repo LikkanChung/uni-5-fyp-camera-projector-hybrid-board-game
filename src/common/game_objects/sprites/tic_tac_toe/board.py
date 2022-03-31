@@ -1,4 +1,5 @@
 import pygame
+from src.client.utils.config import config
 
 
 class TicTacToeBoard(pygame.sprite.Sprite):
@@ -23,7 +24,10 @@ class TicTacToeBoard(pygame.sprite.Sprite):
         self.draw_text_message()
 
     def update_board_bounds(self, anchor, size):
-        self.board_anchor = anchor
+        anchor_x, anchor_y = anchor
+        anchor_x += config.get_property(['client', 'detection_smoothing_buffer', 'board_manual_offset', 'x'])
+        anchor_y += config.get_property(['client', 'detection_smoothing_buffer', 'board_manual_offset', 'y'])
+        self.board_anchor = (anchor_x, anchor_y)
         self.board_size = size
         self.tile_size = (int(self.board_size[0] / 3), int(self.board_size[1] / 3))
 

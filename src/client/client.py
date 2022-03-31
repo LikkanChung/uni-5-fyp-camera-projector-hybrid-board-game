@@ -82,7 +82,7 @@ def setup():
         calibrate_sprites.update(events, dt)
         calibrate_sprites.draw(window)
         pygame.display.update()
-        dt = clock.tick(60)
+        dt += clock.tick(60)
         debug.debugger.update_variables('time', dt)
 
         # Image handling
@@ -114,7 +114,7 @@ def setup():
     calibrate_sprites.update(events, dt)
     calibrate_sprites.draw(window)
     pygame.display.update()
-    dt = clock.tick(60)
+    dt += clock.tick(60)
     debug.debugger.update_variables('time', dt)
     # Calibrate frames
     for color in tokens_buffer:
@@ -131,7 +131,7 @@ def setup():
         calibrate_sprites.update(events, dt)
         calibrate_sprites.draw(window)
         pygame.display.update()
-        dt = clock.tick(60)
+        dt += clock.tick(60)
 
     game_state['state'] = State.MAIN
 
@@ -142,12 +142,12 @@ def main():
     window, clock, game_state, video_capture, calibrator, game_board, token_detector = setup()
 
     # todo make it enter a game handler which has backgrounds etc
-
+    dt = 0
     print('Starting main game loop', game_state)
     while game_state.get('state') is State.MAIN:
         # Quit event handlers
         events, game_state = input_event_handler(game_state)
-        dt = clock.tick(60)
+        dt += clock.tick(60)
 
         projector_resolution = (
             config.get_property(['resolution', 'projector', 'x']),
@@ -160,14 +160,24 @@ def main():
         game_state['state'] = State.GAME
         game_sprite_group = pygame.sprite.Group()
         tic_tac_toe.start(game_sprite_group)
+        game_end_tick = 0
         while game_state.get('state') is State.GAME:
             events, game_state = input_event_handler(game_state)
-            dt = clock.tick(60)
+            dt += clock.tick(60)
             debug.debugger.update_variables('time', dt)
 
             board_boundaries, tokens = detect_board_elements(video_capture, game_board, token_detector)
             tic_tac_toe.update_board(board_boundaries)
             tic_tac_toe.update_tokens(tokens)
+
+            if tic_tac_toe.is_finished():
+                print(dt, " FINISHED")
+                if game_end_tick == 0:
+                    game_end_tick = dt
+                elif dt > (game_end_tick + 5000) and len(tokens) == 0:
+                    print(dt, " RESET")
+                    tic_tac_toe.reset_game()
+                    game_end_tick = 0
 
             game_sprite_group.update(events, dt)
             game_sprite_group.draw(window)

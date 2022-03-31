@@ -8,6 +8,7 @@ class GameHandler:
         self.sprite_group = None
         self.board_anchor = (0, 0)
         self.board_size = (500, 500)
+        self.end = False
 
     def start(self, sprite_group):
         self.sprite_group = sprite_group
@@ -38,7 +39,8 @@ class GameHandler:
                 # top right to bottom left
                 winner = f'{game_state[2][0].upper()} wins!'
         if not winner == '':
-            self.board.update_message(winner)
+            self.end = True
+            self.board.update_message(winner + "   Remove pieces from board to play again")
 
     def update_board(self, board_boundaries):
         # board boundaries of type box, convert to rect with rotation
@@ -59,6 +61,16 @@ class GameHandler:
             col = min(max(0, int(dx / (self.board_size[0] / 3))), 2)
             row = min(max(0, int(dy / (self.board_size[1] / 3))), 2)
             self.board.update_game_state(row, col, token.get_color())
-            print(f'{token} in {row},{col}')
+            # print(f'{token} in {row},{col}')
         self.check_win_state()
+
+    def is_finished(self):
+        return self.end
+
+    def reset_game(self):
+        self.end = False
+        self.board.update_message("")
+        for row in range(3):
+            for col in range(3):
+                self.board.update_game_state(row, col, None)
 

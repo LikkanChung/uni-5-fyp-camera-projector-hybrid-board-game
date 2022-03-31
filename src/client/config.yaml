@@ -30,6 +30,9 @@ client:
     board: 15
     token: 50
     token_calibration: 5
+    board_manual_offset:
+      x: 300
+      y: 50
   token_update_timeout: 15
 resolution:
   camera:
