@@ -1,0 +1,58 @@
+% Title Page
+\newcommand{\idnumber}[1]{\gdef\@idnumber{#1}}
+\newcommand{\programme}[1]{\gdef\@programme{#1}}
+\newcommand{\supervisor}[1]{\gdef\@supervisor{#1}}
+\newcommand{\wordcount}[1]{\gdef\@wordcount{#1}}
+
+\renewcommand{\maketitle}{
+    \begin{titlepage}
+        \begin{center}
+            \includegraphics[width=0.8\textwidth]{images/title/university-of-birmingham-logo}
+
+            \vspace*{\stretch{1.5}}
+
+            {\Large\textbf{\@title}}\\
+            
+            \vspace*{\stretch{1.5}}
+            
+            \begin{large}
+                By\\
+                \textbf{\@author}\\
+                \expandafter\textbf{\@idnumber}\\
+                \expandafter\textbf{\@programme}
+            
+                \vspace*{\stretch{2}}
+                
+                Supervised by\\
+                \textbf{\@supervisor}\\
+                School of Computer Science\\
+                University of Birmingham\\
+                
+                \vspace*{\stretch{2}}
+                
+                \@date
+                
+                \vspace*{\stretch{2}}
+                
+                \@wordcount
+            \end{large}
+            
+        \end{center}
+    \end{titlepage}
+}
+
+% Main body
+% New pages at start of sections
+\AddToHook{cmd/section/before}{\newpage}
+
+\newcommand\dout{
+    \bgroup
+    \markoverwith{%
+        \rule[0.4ex]{0.075pt}{0.1pt}%
+        \hskip-0.1pt
+        \rule[0.9ex]{0.075pt}{0.1pt}%
+    }
+    \ULon
+ }
+ \MakeRobust\dout
+ 
